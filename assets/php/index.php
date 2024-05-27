@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gevaren herkenning</title>
-    <link href="style.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -37,8 +37,11 @@
     </div>
 
     <footer>
-        <p id="footer_text">Vraag 1 van 20</p>
+        <p id="footer_text">Vraag 1 van 26</p>
+
+        <div id="next_button"></div>
     </footer>
+    <script src="../js/answer_checker"></script>
 </body>
 
 </html>
