@@ -21,15 +21,15 @@
         </div>
         <div id="section_answers">
 
-            <div class="answer_options">
+            <div onclick="select(this, 0);" class="answer_options">
                 <p class="answer_text">Remmen</p>
             </div>
 
-            <div class="answer_options">
+            <div onclick="select(this, 1);" class="answer_options">
                 <p class="answer_text">Gas loslaten</p>
             </div>
 
-            <div class="answer_options">
+            <div onclick="select(this, 2);" class="answer_options">
                 <p class="answer_text">Niets</p>
             </div>
 
@@ -41,7 +41,7 @@
 
         <div id="next_button"></div>
     </footer>
-    <script src="../js/answer_checker"></script>
+    <script src="../js/script.js"></script>
 </body>
 
 </html>
