@@ -24,7 +24,6 @@
             }
         }
 
-        prettyDump($correctAnswerCount);
     }
 ?>
 

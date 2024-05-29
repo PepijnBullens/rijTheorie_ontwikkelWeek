@@ -9,7 +9,7 @@
         unset($_SESSION["questionIndex"]);
     }
 
-    // resetAll();
+    resetAll();
 
     $hazardRecognition = [
         "name" => "Gevaar Herkenning",
@@ -139,8 +139,6 @@
 
                 shuffle($options);
             }
-
-            prettyDump($row["feedback"]);
     ?>
 
     <div id="<?= $row["id"] ?>" class="question">
