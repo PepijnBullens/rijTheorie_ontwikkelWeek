@@ -1,5 +1,5 @@
 function checkAnswer() {
-    fetch('./checkAnswer.php', {
+    fetch('./core/checkAnswer.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -15,7 +15,6 @@ function checkAnswer() {
             if (responseData == 'RELOAD') {
                 location.reload();
             }
-            console.log(responseData);
         })
         .catch(error => {
             // Handle errors
@@ -24,7 +23,7 @@ function checkAnswer() {
 }
 
 function setSelectedOption(id) {
-    fetch('./setAnswer.php', {
+    fetch('./core/setAnswer.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -38,6 +37,30 @@ function setSelectedOption(id) {
                 return response.text();
             }
             throw new Error('Network response was not ok.');
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function ranOutOfTime() {
+    fetch('./core/ranOutOfTime.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(responseData => {
+            if (responseData == 'RELOAD') {
+                location.reload();
+            }
         })
         .catch(error => {
             // Handle errors

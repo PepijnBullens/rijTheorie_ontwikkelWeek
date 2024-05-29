@@ -1,5 +1,5 @@
 <?php
-    include_once './db_connect.php';
+    include_once './core/db_connect.php';
 
     function resetAll() {
         unset($_SESSION["answers"]);
@@ -9,12 +9,11 @@
         unset($_SESSION["questionIndex"]);
     }
 
-    resetAll();
+    // resetAll();
 
     $hazardRecognition = [
         "name" => "Gevaar Herkenning",
-        "count" => 1,
-        // 26
+        "count" => 25,
         "neededForPassing" => 14,
         "type" => 4,
         "options" => [
@@ -35,8 +34,7 @@
 
     $knowledge = [
         "name" => "Kennis",
-        "count" => 1,
-        // 12
+        "count" => 12,
         "neededForPassing" => 10,
         "type" => 1,
         "options" => [
@@ -57,8 +55,7 @@
 
     $insight = [
         "name" => "inzicht",
-        "count" => 1,
-        // 28
+        "count" => 28,
         "neededForPassing" => 25,
         "type" => 2,
         "options" => [
@@ -88,19 +85,45 @@
 
     if(!isset($_SESSION["questions"])) $_SESSION["questions"] = null;
     if(!isset($_SESSION["questionIndex"])) $_SESSION["questionIndex"] = 0;
-?>
 
-<!DOCTYPE html>
-<html lang="en">
+    if($_SESSION["questions"] === null) {
+        $stmt = $con->prepare("SELECT id, image, question, feedback, options FROM questions WHERE type = ? ORDER BY RAND() LIMIT ?;");
+        $stmt->bind_param("ii", $_SESSION["types"][$_SESSION["typeIndex"]]["type"], $_SESSION["types"][$_SESSION["typeIndex"]]["count"]);
+        $stmt->execute();
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+        $result = $stmt->get_result();
+        if($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $_SESSION["questions"][] = $row;
+            }
+        }
+    }
 
-<body>
-    <?php
+    if(isset($_SESSION["questions"][$_SESSION["questionIndex"]])) {
+        $row = $_SESSION["questions"][$_SESSION["questionIndex"]];
+        $_SESSION["activeQuestion"] = $row["id"];
+
+        $options = [];
+
+        if($_SESSION["types"][$_SESSION["typeIndex"]]["name"] === "Gevaar Herkenning") {
+            foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $option) {
+                $options[] = [
+                    "front" => $option["front"],
+                    "back" => $option["back"],
+                ];
+            }
+        } else {
+            $decodedFrontOptions = json_decode($_SESSION["questions"][$_SESSION["questionIndex"]]["options"]);
+            foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $key => $option) {
+                $options[] = [
+                    "front" => $decodedFrontOptions[$key],
+                    "back" => $option["back"],
+                ];
+            }
+
+            shuffle($options);
+        }
+
         if($_SESSION["questions"] === null) {
             $stmt = $con->prepare("SELECT id, image, question, feedback, options FROM questions WHERE type = ? ORDER BY RAND() LIMIT ?;");
             $stmt->bind_param("ii", $_SESSION["types"][$_SESSION["typeIndex"]]["type"], $_SESSION["types"][$_SESSION["typeIndex"]]["count"]);
@@ -113,65 +136,99 @@
                 }
             }
         }
+?>
 
+<!DOCTYPE html>
+<html lang="nl">
 
-        if(isset($_SESSION["questions"][$_SESSION["questionIndex"]])) {
-            $row = $_SESSION["questions"][$_SESSION["questionIndex"]];
-            $_SESSION["activeQuestion"] = $row["id"];
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gevaren herkenning</title>
+    <link href="./assets/css/style.css" rel="stylesheet">
+</head>
 
-            $options = [];
+<body>
+    <header>
+        <div id="timer">
+            <p id="timer_text">1</p>
+        </div>
+    </header>
 
-            if($_SESSION["types"][$_SESSION["typeIndex"]]["name"] === "Gevaar Herkenning") {
-                foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $option) {
-                    $options[] = [
-                        "front" => $option["front"],
-                        "back" => $option["back"],
-                    ];
-                }
-            } else {
-                $decodedFrontOptions = json_decode($_SESSION["questions"][$_SESSION["questionIndex"]]["options"]);
-                foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $key => $option) {
-                    $options[] = [
-                        "front" => $decodedFrontOptions[$key],
-                        "back" => $option["back"],
-                    ];
-                }
-
-                shuffle($options);
-            }
-    ?>
-
-    <div id="<?= $row["id"] ?>" class="question">
-        <img src="./img/<?= $row["image"] ?>" alt="image">
-        <p><?= $row["question"] ?></p>
-
+    <div id="content">
         <?php
-            foreach($options as $option) {
-                if($option["front"] != '' && $option["back"] != '') {
+            if(isset($_SESSION["questions"][$_SESSION["questionIndex"]])) {
+                $row = $_SESSION["questions"][$_SESSION["questionIndex"]];
+                $_SESSION["activeQuestion"] = $row["id"];
+
+                $options = [];
+
+                if($_SESSION["types"][$_SESSION["typeIndex"]]["name"] === "Gevaar Herkenning") {
+                    foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $option) {
+                        $options[] = [
+                            "front" => $option["front"],
+                            "back" => $option["back"],
+                        ];
+                    }
+                } else {
+                    $decodedFrontOptions = json_decode($_SESSION["questions"][$_SESSION["questionIndex"]]["options"]);
+                    foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $key => $option) {
+                        $options[] = [
+                            "front" => $decodedFrontOptions[$key],
+                            "back" => $option["back"],
+                        ];
+                    }
+
+                    shuffle($options);
+                }
         ?>
 
-        <button onclick='setSelectedOption(<?= $option["back"] ?>);'><?= $option["front"] ?></button>
+
+        <div id="section_pic">
+            <img src="./assets/imgs/<?= $row["image"] ?>">
+        </div>
+        <div id="section_answers">
+            <p><?= $row["question"] ?></p>
+
+            <?php
+                foreach($options as $option) {
+                    if($option["front"] != '' && $option["back"] != '') {
+            ?>
+
+            <div onclick="select(this); setSelectedOption(<?= $option['back'] ?>);" class="answer_options">
+                <p class="answer_text"><?= $option["front"] ?></p>
+            </div>
+
+            <?php
+                    }
+                }
+            ?>
+
+        </div>
 
         <?php
-                }
             }
         ?>
     </div>
 
-    <?php
-        } else if($_SESSION["typeIndex"] + 1 < count($_SESSION["types"])) {
-            $_SESSION["typeIndex"]++;
-            $_SESSION["questionIndex"] = 0;
-            $_SESSION["questions"] = null;
-            header('Refresh:0');
-        } else {
-            header('location: ./results.php');
-        }
-    ?>
-
-    <button onclick='checkAnswer();'>Volgende</button>
-
-    <script src="./script.js"></script>
+    <footer>
+        <p id="footer_text">Vraag <?= $_SESSION["questionIndex"] + 1 ?> van
+            <?= $_SESSION["types"][$_SESSION["typeIndex"]]["count"] ?></p>
+        <button onclick='checkAnswer();'>Volgende</button>
+    </footer>
+    <script src="./assets/js/back_end.js"></script>
+    <script src="./assets/js/front_end.js"></script>
 </body>
 
 </html>
+
+<?php
+    } else if($_SESSION["typeIndex"] + 1 < count($_SESSION["types"])) {
+        $_SESSION["typeIndex"]++;
+        $_SESSION["questionIndex"] = 0;
+        $_SESSION["questions"] = null;
+        header('Refresh:0');
+    } else {
+        header('location: ./results.php');
+    }
+?>

@@ -1,5 +1,5 @@
 <?php
-    include_once './db_connect.php';
+    include_once './core/db_connect.php';
 
     if(!isset($_SESSION["answers"]) || !isset($_SESSION["types"])) {
         header('location: ./index.php');
@@ -10,13 +10,17 @@
         $correctAnswerCount;
 
         foreach($_SESSION["types"] as $type) {
-            $correctAnswerCount[$type["name"]]["count"] = 0;
+            $correctAnswerCount[$type["name"]]["name"] = $type["name"];
+            $correctAnswerCount[$type["name"]]["totalCount"] = $type["count"];
+            $correctAnswerCount[$type["name"]]["wrongCount"] = 0;
+            $correctAnswerCount[$type["name"]]["neededCount"] = $type["neededForPassing"];
+            
             foreach($_SESSION["answers"] as $answer) {
                 if($answer["category"] == $type["name"] && $answer["correct"] === true) {
-                    $correctAnswerCount[$type["name"]]["count"]++;
+                    $correctAnswerCount[$type["name"]]["wrongCount"]++;
                 }
             }
-            if($correctAnswerCount[$type["name"]]["count"] >= $type["neededForPassing"]) {
+            if($correctAnswerCount[$type["name"]]["wrongCount"] >= $type["neededForPassing"]) {
                 $correctAnswerCount[$type["name"]]["passed"] = true;
             } else {
                 $correctAnswerCount[$type["name"]]["passed"] = false;
@@ -33,22 +37,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Results</title>
+    <link href="./assets/css/results.css" rel="stylesheet">
+
 </head>
 
 <body>
-    <?php
-            foreach($_SESSION["answers"] as $answer) {
-    ?>
+    <div id="content">
+        <div id="top">
+            <img style="<?= $passed ? "border-color: green;" : "border-color: red;" ?>"
+                src="./assets/<?= $passed ? "passed.png" : "notPassed.png" ?>">
 
-    <p><?= $answer["question"] ?></p>
-    <h5><?= $answer["correct"] ? '\'' . $answer["userAnswer"] . '\' is correct!' : 'Sorry... \'' . $answer["correctAnswer"] . '\' is het correcte antwoord.' ?>
-    </h5>
-    <small>id: <?= $answer["id"] ?></small>
+            <div id="section_results">
+                <?php
+                    foreach($correctAnswerCount as $item) {
+                ?>
+                <div style="<?= $item["passed"] ? "color: green; border-color: green;" : "color: red; border-color: red;" ?>"
+                    class="result_text">
+                    <h4><?= $item["name"] ?></h4>
+                    <p><?= $item["passed"] ? "voldoende" : "onvoldoende" ?> - <?= $item["wrongCount"] ?> van de
+                        <?= $item["totalCount"] ?> fout</p>
+                    <p>je mocht <?= $item["neededCount"] ?> fout hebben</p>
+                </div>
+                <?php
+                    }
+                ?>
+            </div>
+        </div>
+        <div id="bottom">
+            <img onclick="flip();" src="./assets/arrow.svg" id="view_results" alt="">
+            <div id="answerTable" class="answers">
+                <?php
+                    foreach($_SESSION["answers"] as $answer) {
+                ?>
+                <div class="answer"
+                    style="<?= $answer["correct"] ? "color: green; border-color: green;" : "color: red; border-color: red;" ?>">
 
-    <?php
-            }
-    ?>
+                    <p><?= $answer["question"] ?></p>
+                    <?php
+                        if($answer["userAnswer"] === "Niet op tijd beantwoord...") {
+                ?>
+
+                    <h5>Niet op tijd beantwoord...</h5>
+
+                    <?php
+                        }
+                ?>
+                    <h5><?= $answer["correct"] ? '\'' . $answer["userAnswer"] . '\' is correct!' : '\'' . $answer["correctAnswer"] . '\' is het correcte antwoord.' ?>
+                    </h5>
+                    <small>id: <?= $answer["id"] ?></small>
+
+                </div>
+
+                <?php
+                    }
+                ?>
+            </div>
+        </div>
+    </div>
+    <script src="./assets/js/front_end.js"></script>
 </body>
 
 </html>
