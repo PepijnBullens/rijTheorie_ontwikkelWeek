@@ -3,7 +3,7 @@
 
     function resetAll() {
         unset($_SESSION["answers"]);
-        unset($_SESSION["currentType"]);
+        unset($_SESSION["types"]);
         unset($_SESSION["typeIndex"]);
         unset($_SESSION["questions"]);
         unset($_SESSION["questionIndex"]);
@@ -12,9 +12,10 @@
     // resetAll();
 
     $hazardRecognition = [
-        "name" => "hazardRecognition",
-        "count" => 2,
-        // 25
+        "name" => "Gevaar Herkenning",
+        "count" => 1,
+        // 26
+        "neededForPassing" => 14,
         "type" => 4,
         "options" => [
             [
@@ -33,9 +34,10 @@
     ];
 
     $knowledge = [
-        "name" => "knowledge",
-        "count" => 3,
-        // 40
+        "name" => "Kennis",
+        "count" => 1,
+        // 12
+        "neededForPassing" => 10,
         "type" => 1,
         "options" => [
             [
@@ -54,9 +56,10 @@
     ];
 
     $insight = [
-        "name" => "insight",
-        "count" => 4,
-        // 40
+        "name" => "inzicht",
+        "count" => 1,
+        // 28
+        "neededForPassing" => 25,
         "type" => 2,
         "options" => [
             [
@@ -76,7 +79,7 @@
     
     if(!isset($_SESSION["answers"])) $_SESSION["answers"] = [];
 
-    if(!isset($_SESSION["currentType"])) $_SESSION["currentType"] = [
+    if(!isset($_SESSION["types"])) $_SESSION["types"] = [
         $hazardRecognition,
         $knowledge,
         $insight
@@ -100,7 +103,7 @@
     <?php
         if($_SESSION["questions"] === null) {
             $stmt = $con->prepare("SELECT id, image, question, feedback, options FROM questions WHERE type = ? ORDER BY RAND() LIMIT ?;");
-            $stmt->bind_param("ii", $_SESSION["currentType"][$_SESSION["typeIndex"]]["type"], $_SESSION["currentType"][$_SESSION["typeIndex"]]["count"]);
+            $stmt->bind_param("ii", $_SESSION["types"][$_SESSION["typeIndex"]]["type"], $_SESSION["types"][$_SESSION["typeIndex"]]["count"]);
             $stmt->execute();
     
             $result = $stmt->get_result();
@@ -118,8 +121,8 @@
 
             $options = [];
 
-            if($_SESSION["currentType"][$_SESSION["typeIndex"]]["name"] === "hazardRecognition") {
-                foreach($_SESSION["currentType"][$_SESSION["typeIndex"]]["options"] as $option) {
+            if($_SESSION["types"][$_SESSION["typeIndex"]]["name"] === "Gevaar Herkenning") {
+                foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $option) {
                     $options[] = [
                         "front" => $option["front"],
                         "back" => $option["back"],
@@ -127,7 +130,7 @@
                 }
             } else {
                 $decodedFrontOptions = json_decode($_SESSION["questions"][$_SESSION["questionIndex"]]["options"]);
-                foreach($_SESSION["currentType"][$_SESSION["typeIndex"]]["options"] as $key => $option) {
+                foreach($_SESSION["types"][$_SESSION["typeIndex"]]["options"] as $key => $option) {
                     $options[] = [
                         "front" => $decodedFrontOptions[$key],
                         "back" => $option["back"],
@@ -158,7 +161,7 @@
     </div>
 
     <?php
-        } else if($_SESSION["typeIndex"] + 1 < count($_SESSION["currentType"])) {
+        } else if($_SESSION["typeIndex"] + 1 < count($_SESSION["types"])) {
             $_SESSION["typeIndex"]++;
             $_SESSION["questionIndex"] = 0;
             $_SESSION["questions"] = null;

@@ -20,13 +20,19 @@
         $userAnswer;
         $correctAnswer;
         $correct = false;
+
+        $hazardRecognitionOptions = [
+            "Remmen",
+            "Gas loslaten",
+            "Niets"
+        ];
     
-        if($_SESSION["currentType"][$_SESSION["typeIndex"]]["name"] == "hazardRecognition") {
+        if($_SESSION["types"][$_SESSION["typeIndex"]]["name"] == "Gevaar Herkenning") {
             if($decodedOptions[0] === $_SESSION["currentAnswer"]) {
                 $correct = true;
             }
             $userAnswer = $_SESSION["currentAnswer"];
-            $correctAnswer = $decodedOptions[0];
+            $correctAnswer = $hazardRecognitionOptions[$decodedOptions[0]];
         } else {
             if($decodedOptions[0] === $decodedOptions[$_SESSION["currentAnswer"]]) {
                 $correct = true;
@@ -38,6 +44,7 @@
     
         $_SESSION["answers"][] = [
             "id" => $id,
+            "category" => $_SESSION["types"][$_SESSION["typeIndex"]]["name"],
             "question" => $question,
             "userAnswer" => $userAnswer,
             "correctAnswer" => $correctAnswer,

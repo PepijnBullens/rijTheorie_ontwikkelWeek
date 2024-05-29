@@ -1,5 +1,31 @@
 <?php
     include_once './db_connect.php';
+
+    if(!isset($_SESSION["answers"]) || !isset($_SESSION["types"])) {
+        header('location: ./index.php');
+        die();
+    } else {
+        $passed;
+
+        $correctAnswerCount;
+
+        foreach($_SESSION["types"] as $type) {
+            $correctAnswerCount[$type["name"]]["count"] = 0;
+            foreach($_SESSION["answers"] as $answer) {
+                if($answer["category"] == $type["name"] && $answer["correct"] === true) {
+                    $correctAnswerCount[$type["name"]]["count"]++;
+                }
+            }
+            if($correctAnswerCount[$type["name"]]["count"] >= $type["neededForPassing"]) {
+                $correctAnswerCount[$type["name"]]["passed"] = true;
+            } else {
+                $correctAnswerCount[$type["name"]]["passed"] = false;
+                $passed = false;
+            }
+        }
+
+        prettyDump($correctAnswerCount);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +39,6 @@
 
 <body>
     <?php
-        if(isset($_SESSION["answers"])) {
             foreach($_SESSION["answers"] as $answer) {
     ?>
 
@@ -24,7 +49,6 @@
 
     <?php
             }
-        }
     ?>
 </body>
 
