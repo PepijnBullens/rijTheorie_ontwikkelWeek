@@ -16,12 +16,13 @@
             $correctAnswerCount[$type["name"]]["neededCount"] = $type["neededForPassing"];
             
             foreach($_SESSION["answers"] as $answer) {
-                if($answer["category"] == $type["name"] && $answer["correct"] === true) {
+                if($answer["category"] == $type["name"] && $answer["correct"] === false) {
                     $correctAnswerCount[$type["name"]]["wrongCount"]++;
                 }
             }
-            if($correctAnswerCount[$type["name"]]["wrongCount"] >= $type["neededForPassing"]) {
+            if($correctAnswerCount[$type["name"]]["wrongCount"] <= $correctAnswerCount[$type["name"]]["totalCount"] - $correctAnswerCount[$type["name"]]["neededCount"]) {
                 $correctAnswerCount[$type["name"]]["passed"] = true;
+                $passed = true;
             } else {
                 $correctAnswerCount[$type["name"]]["passed"] = false;
                 $passed = false;

@@ -1,13 +1,11 @@
 <?php
     include_once './core/db_connect.php';
 
-
-
     $hazardRecognition = [
         "name" => "Gevaar Herkenning",
         "count" => 25,
         // 25
-        "neededForPassing" => 14,
+        "neededForPassing" => 13,
         "type" => 4,
         "options" => [
             [
