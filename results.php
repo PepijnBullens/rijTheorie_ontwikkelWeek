@@ -44,6 +44,7 @@
 
 <body>
     <div id="content">
+        <a onclick="reset();">maak opnieuw</a>
         <div id="top">
             <img style="<?= $passed ? "border-color: green;" : "border-color: red;" ?>"
                 src="./assets/<?= $passed ? "passed.png" : "notPassed.png" ?>">
@@ -51,13 +52,14 @@
             <div id="section_results">
                 <?php
                     foreach($correctAnswerCount as $item) {
+                        $needed = $item["totalCount"] - $item["neededCount"];
                 ?>
                 <div style="<?= $item["passed"] ? "color: green; border-color: green;" : "color: red; border-color: red;" ?>"
                     class="result_text">
                     <h4><?= $item["name"] ?></h4>
                     <p><?= $item["passed"] ? "voldoende" : "onvoldoende" ?> - <?= $item["wrongCount"] ?> van de
                         <?= $item["totalCount"] ?> fout</p>
-                    <p>je mocht <?= $item["neededCount"] ?> fout hebben</p>
+                    <p>je mocht <?= $needed ?> fout hebben</p>
                 </div>
                 <?php
                     }
@@ -95,6 +97,7 @@
             </div>
         </div>
     </div>
+    <script src="./assets/js/back_end.js"></script>
     <script src="./assets/js/front_end.js"></script>
 </body>
 

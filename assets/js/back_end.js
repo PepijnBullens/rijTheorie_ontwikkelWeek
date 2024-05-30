@@ -67,3 +67,24 @@ function ranOutOfTime() {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+
+function reset() {
+    fetch('./core/reset.php', {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(responseData => {
+            if (responseData == 'RELOAD') {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}

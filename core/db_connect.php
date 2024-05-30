@@ -22,4 +22,12 @@
         var_dump($var);
         echo "</pre>";
     }
+
+    function resetAll() {
+        unset($_SESSION["answers"]);
+        unset($_SESSION["types"]);
+        unset($_SESSION["typeIndex"]);
+        unset($_SESSION["questions"]);
+        unset($_SESSION["questionIndex"]);
+    }
 ?>

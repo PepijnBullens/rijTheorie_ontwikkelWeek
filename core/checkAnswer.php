@@ -31,7 +31,7 @@
             if($decodedOptions[0] === $_SESSION["currentAnswer"]) {
                 $correct = true;
             }
-            $userAnswer = $_SESSION["currentAnswer"];
+            $userAnswer = $hazardRecognitionOptions[$_SESSION["currentAnswer"]];
             $correctAnswer = $hazardRecognitionOptions[$decodedOptions[0]];
         } else {
             if($decodedOptions[0] === $decodedOptions[$_SESSION["currentAnswer"]]) {

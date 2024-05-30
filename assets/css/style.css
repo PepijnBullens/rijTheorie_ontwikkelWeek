@@ -9,6 +9,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 header,
@@ -119,4 +120,18 @@ footer button {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.4s;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body::-webkit-scrollbar-thumb {
+  display: none;
+
+}
+
+body::-webkit-scrollbar-track {
+  display: none;
+
 }

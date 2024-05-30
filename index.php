@@ -1,19 +1,12 @@
 <?php
     include_once './core/db_connect.php';
 
-    function resetAll() {
-        unset($_SESSION["answers"]);
-        unset($_SESSION["types"]);
-        unset($_SESSION["typeIndex"]);
-        unset($_SESSION["questions"]);
-        unset($_SESSION["questionIndex"]);
-    }
 
-    // resetAll();
 
     $hazardRecognition = [
         "name" => "Gevaar Herkenning",
         "count" => 25,
+        // 25
         "neededForPassing" => 14,
         "type" => 4,
         "options" => [
@@ -35,6 +28,7 @@
     $knowledge = [
         "name" => "Kennis",
         "count" => 12,
+        // 12
         "neededForPassing" => 10,
         "type" => 1,
         "options" => [
@@ -56,6 +50,7 @@
     $insight = [
         "name" => "inzicht",
         "count" => 28,
+        // 28
         "neededForPassing" => 25,
         "type" => 2,
         "options" => [
