@@ -205,6 +205,7 @@
     </div>
 
     <footer>
+        <button onclick='reset();'>Reset</button>
         <p id="footer_text">Vraag <?= $_SESSION["questionIndex"] + 1 ?> van
             <?= $_SESSION["types"][$_SESSION["typeIndex"]]["count"] ?></p>
         <button onclick='checkAnswer();'>Volgende</button>
